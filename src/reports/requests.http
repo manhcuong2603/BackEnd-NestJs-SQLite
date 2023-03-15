@@ -1,0 +1,25 @@
+POST http://localhost:3030/reports
+Content-Type: application/json
+
+{
+    "make": "mazda",
+    "model": "simple",
+    "year": 2000,
+    "mileage": 30000,
+    "lng": 45,
+    "lat": 45,
+    "price": 20000
+}
+
+### Approve an existing report
+PATCH http://localhost:3030/reports/5
+Content-Type: application/json
+
+{
+    "approved": true
+}
+
+
+### Get an estimate fo an exiting vehicle tìm theo điều kiện 
+
+GET http://localhost:3030/reports?make=mazda&model=simple&lng=45&lat=45&mileage=30000&year=2000&price=20000
