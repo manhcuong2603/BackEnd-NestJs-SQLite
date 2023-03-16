@@ -7,9 +7,43 @@ const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
+    validateUser(payload: any) {
+        throw new Error("Method not implemented.");
+    }
     constructor(
         private usersService: UsersService,
+        private jwtService: JwtService
     ) { }
+
+
+    async getTokens(userId: number, email: string, name: string, username: string, role: string) {
+        const [at, rt] = await Promise.all([
+            this.jwtService.signAsync(
+                {
+                    sub: userId,
+                    email
+                },
+                {
+                    secret: 'at-secret',
+                    expiresIn: 60 * 15,
+                },
+            ),
+            this.jwtService.signAsync(
+                {
+                    sub: userId,
+                    email
+                },
+                {
+                    secret: 'rt-secret',
+                    expiresIn: 60 * 60 * 24 * 7,
+                },
+            ),
+        ]);
+        return {
+            access_token: at,
+            refresh_token: rt
+        }
+    }
 
     async signup(email: string, name: string, username: string, role: string, password: string) {
         //See if email is in use
@@ -27,7 +61,11 @@ export class AuthService {
         //Create a new user and save it
         const user = await this.usersService.create(email, name, username, role, result);
         //return the user
-        return user;
+        const tokens = await this.getTokens(
+            user.id, user.email, user.name, user.username, user.role
+        )
+
+        return [tokens, user]
     }
 
 
@@ -44,6 +82,15 @@ export class AuthService {
             throw new BadRequestException('Wrong password')
         }
 
-        return user;
+        // const access_token = await this.singUser(user.id, user.role, 'user');
+        return user
+    }
+
+    async singUser(userId: number, role: string, type: string) {
+        return this.jwtService.sign({
+            sub: userId,
+            role,
+            claim: type
+        });
     }
 } 

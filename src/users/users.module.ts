@@ -7,9 +7,16 @@ import { UsersService } from './users.service';
 import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CurrentUserMiddleware } from './middlewares/current-user-middleware';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    JwtModule.register({
+      secret: 'YOUR_SECRET_KEY',
+      signOptions: { expiresIn: '1d' },
+    })
+  ],
   controllers: [UsersController],
   providers: [
     UsersService,

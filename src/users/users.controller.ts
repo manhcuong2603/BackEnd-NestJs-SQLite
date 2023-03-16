@@ -44,7 +44,7 @@ export class UsersController {
     @Post('/register')
     async createUser(@Body() body: CreateUserDto, @Session() session: any) {
         const user = await this.authService.signup(body.email, body.name, body.username, body.role, body.password);
-        session.userId = user.id;
+        // session.userId = user.id;
         return user;
     }
     //Đăng nhập
@@ -52,7 +52,7 @@ export class UsersController {
     async signin(@Body() body: LoginUserDto, @Session() session: any) {
 
         const user = await this.authService.signin(body.email, body.password);
-        session.userId = user.id;
+        // session.userId = user.id;
         return user;
     }
 
