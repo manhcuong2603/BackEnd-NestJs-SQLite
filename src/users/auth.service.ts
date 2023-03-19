@@ -16,12 +16,12 @@ export class AuthService {
     ) { }
 
 
-    async getTokens(userId: number, email: string, name: string, username: string, role: string) {
+    async getTokens(userId: number, email: string, name: string, username: string, role: string, password: string) {
         const [at, rt] = await Promise.all([
             this.jwtService.signAsync(
                 {
                     sub: userId,
-                    email
+                    email, name, username, role, password
                 },
                 {
                     secret: 'at-secret',
@@ -31,7 +31,7 @@ export class AuthService {
             this.jwtService.signAsync(
                 {
                     sub: userId,
-                    email
+                    email, name, username, role, password
                 },
                 {
                     secret: 'rt-secret',
@@ -62,10 +62,10 @@ export class AuthService {
         const user = await this.usersService.create(email, name, username, role, result);
         //return the user
         const tokens = await this.getTokens(
-            user.id, user.email, user.name, user.username, user.role
+            user.id, user.email, user.name, user.username, user.role, user.password
         )
 
-        return [tokens, user]
+        return { tokens, user }
     }
 
 
@@ -83,7 +83,10 @@ export class AuthService {
         }
 
         // const access_token = await this.singUser(user.id, user.role, 'user');
-        return user
+        const tokens = await this.getTokens(
+            user.id, user.email, user.name, user.username, user.role, user.password
+        )
+        return { user, tokens }
     }
 
     async singUser(userId: number, role: string, type: string) {

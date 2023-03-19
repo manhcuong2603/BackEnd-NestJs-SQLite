@@ -2,8 +2,8 @@ POST http://localhost:3030/users/register
 Content-Type: application/json
 
 {
-    "email": "anh2@gmail.com",
-    "name": "admin",
+    "email": "anh11@gmail.com",
+    "name": "Nam",
     "username": "Lê",
     "password": "123123abc",
     "role": "user"
@@ -14,7 +14,7 @@ POST http://localhost:3030/users/login
 Content-Type: application/json
 
 {
-   "email": "anh@gmail.com",
+   "email": "anh11@gmail.com",
     "password": "123123abc"
 }
 

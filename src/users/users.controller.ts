@@ -13,17 +13,14 @@ import { CreateUserDto } from './dtos/create-user-dtos';
 import { UpdateUserDto } from './dtos/update-user-dto';
 import { UsersService } from './users.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
-import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
-// import { AuthGuard } from 'src/guards/auth.guard';
 import { LoginUserDto } from './dtos/login-user-dto';
-import { RolesGuard } from 'src/guards/roles-guard';
 import { Roles } from './decorators/roles.decorator';
 
 @Controller('users')
-@Serialize(UserDto)
+// @Serialize(UserDto)
 export class UsersController {
     constructor(
         private usersService: UsersService,
@@ -33,8 +30,8 @@ export class UsersController {
 
     @Get('/whoami')
     // @UseGuards(AuthGuard)
-    whoAmI(@CurrentUser() user?: User) {
-        return user?.role;
+    whoAmI(@CurrentUser() user: User) {
+        return user;
     }
     @Post('/signout')
     signOut(@Session() session: any) {
@@ -76,12 +73,12 @@ export class UsersController {
 
     @Delete('/:id')
     @Roles('admin')
-    async removeUser(@Param('id') id: string) {
-        const user = await this.usersService.findOne(parseInt(id));
-        if (user.role !== 'admin') {
-            throw new NotFoundException('Only admin can remove users');
-        }
-        return this.usersService.remove(parseInt(id));
+    async removeUser(@Param('id') id: string, @CurrentUser() user: User) {
+        console.log(user);
+        // if (user.role !== 'admin') {
+        //     throw new NotFoundException('Only admin can remove users');
+        // }
+        // return this.usersService.remove(parseInt(id));
     }
 
 
